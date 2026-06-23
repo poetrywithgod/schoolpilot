@@ -216,6 +216,15 @@ importers:
 
   apps/staff-portal:
     dependencies:
+      '@schoolpilot/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@schoolpilot/shared-utils':
+        specifier: workspace:*
+        version: link:../../packages/shared-utils
+      '@schoolpilot/ui-kit':
+        specifier: workspace:*
+        version: link:../../packages/ui-kit
       react:
         specifier: ^19.2.6
         version: 19.2.7
@@ -268,6 +277,15 @@ importers:
 
   apps/student-portal:
     dependencies:
+      '@schoolpilot/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@schoolpilot/shared-utils':
+        specifier: workspace:*
+        version: link:../../packages/shared-utils
+      '@schoolpilot/ui-kit':
+        specifier: workspace:*
+        version: link:../../packages/ui-kit
       react:
         specifier: ^19.2.6
         version: 19.2.7
@@ -320,6 +338,15 @@ importers:
 
   apps/super-admin:
     dependencies:
+      '@schoolpilot/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@schoolpilot/shared-utils':
+        specifier: workspace:*
+        version: link:../../packages/shared-utils
+      '@schoolpilot/ui-kit':
+        specifier: workspace:*
+        version: link:../../packages/ui-kit
       react:
         specifier: ^19.2.6
         version: 19.2.7
