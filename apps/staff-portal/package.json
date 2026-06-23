@@ -15,7 +15,9 @@
     "@schoolpilot/ui-kit": "workspace:*",
     "@supabase/supabase-js": "^2.108.2",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.18.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
