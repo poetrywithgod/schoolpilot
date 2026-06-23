@@ -1,0 +1,7 @@
+export * from './school.types'
+export * from './student.types'
+export * from './staff.types'
+export * from './class.types'
+export * from './result.types'
+export * from './payment.types'
+export * from './announcement.types'
