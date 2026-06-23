@@ -7,6 +7,7 @@ import { BursarDashboard } from '../pages/dashboard/BursarDashboard'
 import { NotFound } from '../pages/NotFound'
 import { Unauthorized } from '../pages/Unauthorized'
 import { useAuthStore } from '../store/authStore'
+import { SchoolProfile } from '../pages/settings/SchoolProfile'
 
 const DashboardRouter = () => {
   const { user } = useAuthStore()
@@ -102,11 +103,11 @@ export const router = createBrowserRouter([
   {
     path: '/settings',
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <ComingSoon page="Settings" />
-      </ProtectedRoute>
+        <ProtectedRoute allowedRoles={['admin']}>
+        <SchoolProfile />
+        </ProtectedRoute>
     ),
-  },
+    },
   {
     path: '/unauthorized',
     element: <Unauthorized />,
