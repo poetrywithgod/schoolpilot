@@ -8,6 +8,8 @@ import { NotFound } from '../pages/NotFound'
 import { Unauthorized } from '../pages/Unauthorized'
 import { useAuthStore } from '../store/authStore'
 import { SchoolProfile } from '../pages/settings/SchoolProfile'
+import { SessionManager } from '../pages/settings/SessionManager'
+
 
 const DashboardRouter = () => {
   const { user } = useAuthStore()
@@ -101,13 +103,21 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/settings',
-    element: (
-        <ProtectedRoute allowedRoles={['admin']}>
-        <SchoolProfile />
-        </ProtectedRoute>
-    ),
-    },
+  path: '/settings',
+  element: (
+    <ProtectedRoute allowedRoles={['admin']}>
+      <SchoolProfile />
+    </ProtectedRoute>
+  ),
+ },
+ {
+  path: '/settings/sessions',
+  element: (
+    <ProtectedRoute allowedRoles={['admin']}>
+      <SessionManager />
+    </ProtectedRoute>
+  ),
+  },
   {
     path: '/unauthorized',
     element: <Unauthorized />,
