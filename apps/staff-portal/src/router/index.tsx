@@ -9,6 +9,8 @@ import { Unauthorized } from '../pages/Unauthorized'
 import { useAuthStore } from '../store/authStore'
 import { SchoolProfile } from '../pages/settings/SchoolProfile'
 import { SessionManager } from '../pages/settings/SessionManager'
+import { ClassList } from '../pages/classes/ClassList'
+import { SubjectList } from '../pages/classes/SubjectList'
 
 
 const DashboardRouter = () => {
@@ -63,12 +65,20 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/classes',
-    element: (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <ComingSoon page="Classes" />
-      </ProtectedRoute>
-    ),
+  path: '/classes',
+  element: (
+    <ProtectedRoute allowedRoles={['admin']}>
+      <ClassList />
+    </ProtectedRoute>
+  ),
+},
+{
+  path: '/subjects',
+  element: (
+    <ProtectedRoute allowedRoles={['admin']}>
+      <SubjectList />
+    </ProtectedRoute>
+  ),
   },
   {
     path: '/attendance',
