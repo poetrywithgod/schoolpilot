@@ -12,6 +12,8 @@ import { SessionManager } from '../pages/settings/SessionManager'
 import { ClassList } from '../pages/classes/ClassList'
 import { SubjectList } from '../pages/classes/SubjectList' 
 import { StaffList } from '../pages/staff/StaffList'
+import { StudentList } from '../pages/students/StudentList'
+import { CreateStudent } from '../pages/students/CreateStudent'
 
 
 const DashboardRouter = () => {
@@ -49,14 +51,32 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
+
+    {
     path: '/students',
     element: (
       <ProtectedRoute allowedRoles={['admin', 'teacher']}>
-        <ComingSoon page="Students" />
+        <StudentList />
       </ProtectedRoute>
     ),
   },
+  {
+    path: '/students/create',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <CreateStudent />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/students/:id',
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+        <ComingSoon page="Student Detail" />
+      </ProtectedRoute>
+    ),
+  },
+  
   {
     path: '/staff',
     element: (
