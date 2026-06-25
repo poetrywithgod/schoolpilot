@@ -10,7 +10,8 @@ import { useAuthStore } from '../store/authStore'
 import { SchoolProfile } from '../pages/settings/SchoolProfile'
 import { SessionManager } from '../pages/settings/SessionManager'
 import { ClassList } from '../pages/classes/ClassList'
-import { SubjectList } from '../pages/classes/SubjectList'
+import { SubjectList } from '../pages/classes/SubjectList' 
+import { StaffList } from '../pages/staff/StaffList'
 
 
 const DashboardRouter = () => {
@@ -60,10 +61,10 @@ export const router = createBrowserRouter([
     path: '/staff',
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
-        <ComingSoon page="Staff" />
+        <StaffList />
       </ProtectedRoute>
-    ),
-  },
+  ),
+},
   {
   path: '/classes',
   element: (
