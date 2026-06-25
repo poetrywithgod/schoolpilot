@@ -15,6 +15,8 @@ import { StaffList } from '../pages/staff/StaffList'
 import { StudentList } from '../pages/students/StudentList'
 import { CreateStudent } from '../pages/students/CreateStudent'
 import { StudentDetail } from '../pages/students/StudentDetail'
+import { MarkAttendance } from '../pages/attendance/MarkAttendance'
+
 
 
 const DashboardRouter = () => {
@@ -106,7 +108,7 @@ export const router = createBrowserRouter([
     path: '/attendance',
     element: (
       <ProtectedRoute allowedRoles={['admin', 'teacher']}>
-        <ComingSoon page="Attendance" />
+        <MarkAttendance />
       </ProtectedRoute>
     ),
   },
