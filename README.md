@@ -51,7 +51,7 @@ schoolpilot/
 └── infrastructure/         # Nginx config, Docker, docker-compose
 ```
 
----
+
 
 ## 👥 User Roles
 
@@ -64,9 +64,9 @@ schoolpilot/
 | **Student** | Student Portal | Own profile, subjects, results, fees (read) |
 | **Parent/Guardian** | Student Portal | Child's results, fees, attendance — can make payments |
 
----
 
-## ✨ v1 Features
+
+## v1 Features
 
 ### 👨‍💼 School Admin
 - School profile setup with logo and branding
@@ -115,7 +115,7 @@ schoolpilot/
 - Pay via guest payment link without logging in
 - Receive SMS alerts — absence, fee deadlines, results published
 
----
+
 
 ## 🗄️ Database Schema
 
@@ -148,7 +148,7 @@ All tables have **Row Level Security (RLS)** enabled. Every query is automatical
 - **HTTPS enforced** — Wildcard SSL covers all subdomains
 - **Image optimization** — Student photos compressed client-side before upload (max 300KB)
 
----
+
 
 ## 📦 Shared Packages
 
