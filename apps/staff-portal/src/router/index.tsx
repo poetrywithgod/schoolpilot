@@ -16,6 +16,7 @@ import { StudentList } from '../pages/students/StudentList'
 import { CreateStudent } from '../pages/students/CreateStudent'
 import { StudentDetail } from '../pages/students/StudentDetail'
 import { MarkAttendance } from '../pages/attendance/MarkAttendance'
+import { ScoreEntry } from '../pages/results/ScoreEntry'
 
 
 
@@ -112,11 +113,11 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
+    {
     path: '/results',
     element: (
       <ProtectedRoute allowedRoles={['admin', 'teacher']}>
-        <ComingSoon page="Results" />
+        <ScoreEntry />
       </ProtectedRoute>
     ),
   },
