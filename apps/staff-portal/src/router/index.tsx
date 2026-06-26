@@ -18,6 +18,7 @@ import { StudentDetail } from '../pages/students/StudentDetail'
 import { MarkAttendance } from '../pages/attendance/MarkAttendance'
 import { ScoreEntry } from '../pages/results/ScoreEntry'
 import { FeeSetup } from '../pages/payments/FeeSetup'
+import { AnnouncementList } from '../pages/announcements/AnnouncementList'
 
 
 
@@ -134,7 +135,7 @@ export const router = createBrowserRouter([
     path: '/announcements',
     element: (
       <ProtectedRoute>
-        <ComingSoon page="Announcements" />
+        <AnnouncementList />
       </ProtectedRoute>
     ),
   },
