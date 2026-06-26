@@ -19,6 +19,8 @@ import { MarkAttendance } from '../pages/attendance/MarkAttendance'
 import { ScoreEntry } from '../pages/results/ScoreEntry'
 import { FeeSetup } from '../pages/payments/FeeSetup'
 import { AnnouncementList } from '../pages/announcements/AnnouncementList'
+import { IDCardGenerator } from '../pages/students/IDCardGenerator'
+
 
 
 
@@ -128,6 +130,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin', 'bursar']}>
         <FeeSetup />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/id-cards',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <IDCardGenerator />
       </ProtectedRoute>
     ),
   },
