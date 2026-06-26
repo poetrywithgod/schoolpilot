@@ -17,6 +17,7 @@ import { CreateStudent } from '../pages/students/CreateStudent'
 import { StudentDetail } from '../pages/students/StudentDetail'
 import { MarkAttendance } from '../pages/attendance/MarkAttendance'
 import { ScoreEntry } from '../pages/results/ScoreEntry'
+import { FeeSetup } from '../pages/payments/FeeSetup'
 
 
 
@@ -125,7 +126,7 @@ export const router = createBrowserRouter([
     path: '/payments',
     element: (
       <ProtectedRoute allowedRoles={['admin', 'bursar']}>
-        <ComingSoon page="Payments" />
+        <FeeSetup />
       </ProtectedRoute>
     ),
   },
