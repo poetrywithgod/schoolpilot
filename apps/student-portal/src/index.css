@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-forest: #0C3B2E;
+  --color-sage: #6D9773;
+  --color-tan: #BB8A52;
+  --color-gold: #FFBA00;
+  --color-offwhite: #F5F5F0;
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Lora', serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-offwhite);
+  overscroll-behavior: none;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+}
+
+h1, h2, h3, h4, h5, h6, button, label, nav {
+  font-family: var(--font-heading);
+}
