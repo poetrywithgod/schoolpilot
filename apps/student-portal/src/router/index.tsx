@@ -6,6 +6,8 @@ import { StudentDashboard } from '../pages/dashboard/StudentDashboard'
 import { MySubjects } from '../pages/subjects/MySubjects'
 import { ResultList } from '../pages/results/ResultList'
 import { FeeBalance } from '../pages/fees/FeeBalance'
+import { Announcements } from '../pages/announcements/Announcements'
+import { StudentProfile } from '../pages/profile/StudentProfile'
 
 const ComingSoon = ({ page }: { page: string }) => (
   <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F5F5F0' }}>
@@ -71,7 +73,7 @@ export const router = createBrowserRouter([
     path: '/profile',
     element: (
       <ProtectedRoute>
-        <ComingSoon page="Profile" />
+        <StudentProfile />
       </ProtectedRoute>
     ),
   },
@@ -79,7 +81,7 @@ export const router = createBrowserRouter([
     path: '/announcements',
     element: (
       <ProtectedRoute>
-        <ComingSoon page="Announcements" />
+        <Announcements />
       </ProtectedRoute>
     ),
   },
