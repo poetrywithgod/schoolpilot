@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Camera, LogOut, User, MapPin, Phone, Calendar, Shield } from 'lucide-react'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { useAuthStore } from '../../store/authStore'
@@ -11,21 +11,75 @@ export const StudentProfile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [form, setForm] = useState({
-    address: student?.profileCompleted ? '' : '',
-    date_of_birth: '',
-    guardian_name: '',
-    guardian_phone: '',
+    address: student?.address ?? '',
+    date_of_birth: student?.dateOfBirth ?? '',
+    guardian_name: student?.guardianName ?? '',
+    guardian_phone: student?.guardianPhone ?? '',
   })
+
+  // Always pull fresh data from Supabase on mount, so the page never shows
+  // stale/blank values if the auth store wasn't fully populated at login.
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!student?.id) {
+        setIsLoading(false)
+        return
+      }
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('students')
+          .select('address, date_of_birth, guardian_name, guardian_phone, photo_url, profile_completed')
+          .eq('id', student.id)
+          .single()
+
+        if (fetchError) throw fetchError
+
+        if (data) {
+          setForm({
+            address: data.address ?? '',
+            date_of_birth: data.date_of_birth ?? '',
+            guardian_name: data.guardian_name ?? '',
+            guardian_phone: data.guardian_phone ?? '',
+          })
+          setStudent({
+            ...student,
+            address: data.address ?? '',
+            dateOfBirth: data.date_of_birth ?? '',
+            guardianName: data.guardian_name ?? '',
+            guardianPhone: data.guardian_phone ?? '',
+            photoUrl: data.photo_url ?? student.photoUrl,
+            profileCompleted: !!data.profile_completed,
+          })
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to load profile')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [student?.id])
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !student) return
 
-    // Compress image
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be smaller than 5MB')
+      return
+    }
+
     setIsUploading(true)
     setError('')
     try {
@@ -41,7 +95,6 @@ export const StudentProfile = () => {
         .from('school-assets')
         .getPublicUrl(filePath)
 
-      // Update student record
       const { error: updateError } = await supabase
         .from('students')
         .update({ photo_url: data.publicUrl })
@@ -53,18 +106,36 @@ export const StudentProfile = () => {
       setSuccess('Photo updated successfully')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Failed to upload photo')
     } finally {
       setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
+  }
+
+  const validateForm = () => {
+    if (form.guardian_phone && !/^[0-9+\s-]{7,15}$/.test(form.guardian_phone)) {
+      setError('Please enter a valid phone number')
+      return false
+    }
+    if (form.date_of_birth) {
+      const dob = new Date(form.date_of_birth)
+      if (Number.isNaN(dob.getTime()) || dob > new Date()) {
+        setError('Please enter a valid date of birth')
+        return false
+      }
+    }
+    return true
   }
 
   const handleSave = async () => {
     if (!student) return
-    setIsSaving(true)
     setError('')
+    if (!validateForm()) return
+
+    setIsSaving(true)
     try {
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('students')
         .update({
           address: form.address || null,
@@ -75,26 +146,62 @@ export const StudentProfile = () => {
         })
         .eq('id', student.id)
 
-      if (error) throw error
+      if (updateError) throw updateError
 
-      setStudent({ ...student, profileCompleted: true })
+      setStudent({
+        ...student,
+        address: form.address,
+        dateOfBirth: form.date_of_birth,
+        guardianName: form.guardian_name,
+        guardianPhone: form.guardian_phone,
+        profileCompleted: true,
+      })
       setIsEditing(false)
       setSuccess('Profile updated successfully')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Failed to update profile. Please try again.')
     } finally {
       setIsSaving(false)
     }
   }
 
+  const handleCancelEdit = () => {
+    // Revert any unsaved changes back to last known good values
+    setForm({
+      address: student?.address ?? '',
+      date_of_birth: student?.dateOfBirth ?? '',
+      guardian_name: student?.guardianName ?? '',
+      guardian_phone: student?.guardianPhone ?? '',
+    })
+    setError('')
+    setIsEditing(false)
+  }
+
   const handleSignOut = async () => {
-    await signOut()
-    navigate('/login')
+    try {
+      await signOut()
+      navigate('/login')
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign out')
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <PageLayout title="My Profile">
+        <div className="flex items-center justify-center py-20">
+          <div
+            className="w-8 h-8 rounded-full border-4 border-t-transparent animate-spin"
+            style={{ borderColor: '#0C3B2E', borderTopColor: 'transparent' }}
+          />
+        </div>
+      </PageLayout>
+    )
   }
 
   return (
-    <PageLayout title="My Profile" showNotification={false}>
+    <PageLayout title="My Profile">
       <div className="px-5 py-4">
 
         {success && (
@@ -136,7 +243,7 @@ export const StudentProfile = () => {
                   className="w-full h-full flex items-center justify-center text-2xl font-bold"
                   style={{ backgroundColor: '#FFBA00', color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
                 >
-                  {student?.firstName[0]}{student?.lastName[0]}
+                  {student?.firstName?.[0]}{student?.lastName?.[0]}
                 </div>
               )}
             </div>
@@ -207,7 +314,7 @@ export const StudentProfile = () => {
                 Student Information
               </p>
               <button
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={() => (isEditing ? handleCancelEdit() : setIsEditing(true))}
                 className="text-xs font-semibold px-3 py-1 rounded-lg"
                 style={{ backgroundColor: '#e8f5f0', color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
               >
@@ -280,6 +387,7 @@ export const StudentProfile = () => {
                     <input
                       type="date"
                       value={form.date_of_birth}
+                      max={new Date().toISOString().split('T')[0]}
                       onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
                       className="w-full rounded-xl border-2 px-3 py-2.5 text-sm outline-none"
                       style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}

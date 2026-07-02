@@ -2,3 +2,6 @@ packages:
   - "apps/*"
   - "packages/*"
   - "pdf-service"
+allowBuilds:
+  esbuild: false
+  puppeteer: false

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, BarChart2, Wallet, Megaphone, ChevronRight, X } from 'lucide-react'
+import { BookOpen, BarChart2, Wallet, Megaphone, Calendar, ChevronRight, X } from 'lucide-react'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { useAuthStore } from '../../store/authStore'
 import { supabase } from '../../lib/supabase'
@@ -26,6 +26,13 @@ const quickLinks = [
     path: '/fees',
     color: '#BB8A52',
     bg: '#fdf3e8',
+  },
+  {
+    label: 'Attendance',
+    icon: Calendar,
+    path: '/attendance',
+    color: '#2563eb',
+    bg: '#eff6ff',
   },
   {
     label: 'Announcements',

@@ -19,6 +19,10 @@ export interface StudentUser {
   schoolSlug: string
   schoolLogoUrl: string | null
   parentLinkingCode: string
+  address: string | null
+  dateOfBirth: string | null
+  guardianName: string | null
+  guardianPhone: string | null
 }
 
 export interface ParentUser {

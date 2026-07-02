@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../store/authStore'
 
 export const Login = () => {
   const navigate = useNavigate()
-  const { setStudent, setLoading, isLoading } = useAuthStore()
+  const { setStudent, setParent, setLoading, isLoading } = useAuthStore()
   const [mode, setMode] = useState<'student' | 'parent'>('student')
   const [regNumber, setRegNumber] = useState('')
   const [pin, setPin] = useState('')
@@ -27,7 +28,6 @@ export const Login = () => {
     try {
       const slug = getSchoolFromSubdomain()
 
-      // Get school
       const { data: school, error: schoolError } = await supabase
         .from('schools')
         .select('*')
@@ -36,7 +36,6 @@ export const Login = () => {
 
       if (schoolError || !school) throw new Error('School not found')
 
-      // Build internal email from reg number
       const email = `${regNumber.toLowerCase().replace(/\//g, '.')}@schoolpilot.internal`
 
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -46,7 +45,6 @@ export const Login = () => {
 
       if (authError) throw new Error('Invalid reg number or PIN')
 
-      // Get student record
       const { data: student, error: studentError } = await supabase
         .from('students')
         .select('*, classes(level, arm)')
@@ -63,7 +61,9 @@ export const Login = () => {
         lastName: student.last_name,
         regNumber: student.reg_number,
         classId: student.class_id,
-        className: student.classes ? `${student.classes.level} ${student.classes.arm}` : null,
+        className: student.classes
+          ? `${Array.isArray(student.classes) ? student.classes[0]?.level : student.classes.level} ${Array.isArray(student.classes) ? student.classes[0]?.arm : student.classes.arm}`
+          : null,
         photoUrl: student.photo_url,
         profileCompleted: student.profile_completed,
         schoolId: school.id,
@@ -71,9 +71,12 @@ export const Login = () => {
         schoolSlug: school.slug,
         schoolLogoUrl: school.logo_url,
         parentLinkingCode: student.parent_linking_code,
+        address: student.address ?? null,
+        dateOfBirth: student.date_of_birth ?? null,
+        guardianName: student.guardian_name ?? null,
+        guardianPhone: student.guardian_phone ?? null,
       })
 
-      // Check if first login — PIN equals last 4 of reg number
       const defaultPin = student.reg_number.slice(-4)
       if (pin === defaultPin) {
         navigate('/change-pin')
@@ -92,12 +95,29 @@ export const Login = () => {
     setLoading(true)
     setError('')
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (authError) throw new Error('Invalid email or password')
+
+      const { data: parentData, error: parentError } = await supabase
+        .from('parents')
+        .select('*')
+        .eq('auth_id', data.user.id)
+        .single()
+
+      if (parentError || !parentData) throw new Error('Parent record not found')
+
+      setParent({
+        id: parentData.id,
+        authId: data.user.id,
+        firstName: parentData.first_name,
+        lastName: parentData.last_name,
+        email: parentData.email,
+        phone: parentData.phone,
+      })
 
       navigate('/dashboard')
     } catch (err: any) {
@@ -113,17 +133,29 @@ export const Login = () => {
       {/* Header */}
       <div className="px-6 pt-16 pb-10" style={{ backgroundColor: '#0C3B2E' }}>
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FFBA00' }}>
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: '#FFBA00' }}
+          >
             <span className="font-black text-lg" style={{ color: '#0C3B2E' }}>S</span>
           </div>
-          <span className="text-white font-bold text-xl" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <span
+            className="text-white font-bold text-xl"
+            style={{ fontFamily: 'Poppins, sans-serif' }}
+          >
             SchoolPilot
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+        <h1
+          className="text-3xl font-bold text-white mb-2"
+          style={{ fontFamily: 'Poppins, sans-serif' }}
+        >
           Welcome back 👋
         </h1>
-        <p className="text-sm" style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}>
+        <p
+          className="text-sm"
+          style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}
+        >
           Sign in to your account to continue
         </p>
       </div>
@@ -160,7 +192,10 @@ export const Login = () => {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl text-sm" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>
+            <div
+              className="mb-4 px-4 py-3 rounded-xl text-sm"
+              style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}
+            >
               {error}
             </div>
           )}
@@ -168,7 +203,10 @@ export const Login = () => {
           {mode === 'student' ? (
             <div className="space-y-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}>
+                <label
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                >
                   Reg Number
                 </label>
                 <input
@@ -177,17 +215,17 @@ export const Login = () => {
                   value={regNumber}
                   onChange={(e) => setRegNumber(e.target.value.toUpperCase())}
                   className="w-full rounded-2xl border-2 px-4 py-3.5 text-sm outline-none transition-all"
-                  style={{
-                    borderColor: '#e5e7eb',
-                    fontFamily: 'Poppins, sans-serif',
-                  }}
+                  style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
                   onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
                   onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}>
+                <label
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                >
                   PIN
                 </label>
                 <div className="relative">
@@ -197,10 +235,7 @@ export const Login = () => {
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
                     className="w-full rounded-2xl border-2 px-4 py-3.5 text-sm outline-none transition-all pr-12"
-                    style={{
-                      borderColor: '#e5e7eb',
-                      fontFamily: 'Poppins, sans-serif',
-                    }}
+                    style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
                     onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
                     onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                   />
@@ -209,16 +244,7 @@ export const Login = () => {
                     onClick={() => setShowPin(!showPin)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
                   >
-                    {showPin ? (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                      </svg>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    )}
+                    {showPin ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
@@ -240,7 +266,10 @@ export const Login = () => {
           ) : (
             <div className="space-y-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}>
+                <label
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                >
                   Email Address
                 </label>
                 <input
@@ -256,7 +285,10 @@ export const Login = () => {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}>
+                <label
+                  className="text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                >
                   Password
                 </label>
                 <input
@@ -285,23 +317,27 @@ export const Login = () => {
                 {isLoading ? 'Signing in...' : 'Sign In →'}
               </button>
 
-              <div className="text-center pt-2">
-                <p className="text-sm" style={{ color: '#6b7280', fontFamily: 'Lora, serif' }}>
-                  Don't have an account?{' '}
-                  <button
-                    onClick={() => window.location.href = '/register'}
-                    className="font-semibold"
-                    style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
-                  >
-                    Register here
-                  </button>
-                </p>
-              </div>
+              <p
+                className="text-center text-sm"
+                style={{ color: '#6b7280', fontFamily: 'Lora, serif' }}
+              >
+                Don't have an account?{' '}
+                <button
+                  onClick={() => navigate('/register')}
+                  className="font-semibold"
+                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                >
+                  Register here
+                </button>
+              </p>
             </div>
           )}
         </div>
 
-        <p className="text-center text-xs mt-6 pb-8" style={{ color: '#9ca3af', fontFamily: 'Lora, serif' }}>
+        <p
+          className="text-center text-xs mt-6 pb-8"
+          style={{ color: '#9ca3af', fontFamily: 'Lora, serif' }}
+        >
           SchoolPilot © 2026 · Built for Nigerian Schools 🇳🇬
         </p>
       </div>
