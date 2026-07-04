@@ -25,5 +25,11 @@
     "express": "^5.2.1",
     "puppeteer": "^25.2.1",
     "puppeteer-core": "^25.2.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "puppeteer"
+    ]
   }
 }
