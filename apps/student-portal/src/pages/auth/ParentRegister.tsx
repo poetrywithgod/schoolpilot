@@ -1,32 +1,39 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
-import { registerParent } from '../../services/parent.service'
-import { useAuthStore } from '../../store/authStore'
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerParent } from "../../services/parent.service";
+import { useAuthStore } from "../../store/authStore";
 
 export const ParentRegister = () => {
-  const navigate = useNavigate()
-  const { setParent } = useAuthStore()
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const navigate = useNavigate();
+  const { setParent } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
 
   const handleRegister = async () => {
-    if (!form.firstName || !form.lastName || !form.email || !form.phone || !form.password) {
-      setError('Please fill in all fields')
-      return
+    if (
+      !form.firstName ||
+      !form.lastName ||
+      !form.email ||
+      !form.phone ||
+      !form.password
+    ) {
+      setError("Please fill in all fields");
+      return;
     }
-    setIsLoading(true)
-    setError('')
+
+    setIsLoading(true);
+    setError("");
     try {
-      const parent = await registerParent(form)
+      const parent = await registerParent(form);
 
       setParent({
         id: parent.id,
@@ -35,35 +42,43 @@ export const ParentRegister = () => {
         lastName: parent.last_name,
         email: parent.email,
         phone: parent.phone,
-      })
+      });
 
-      navigate('/link-child')
+      navigate("/link-child");
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F5F5F0' }}>
-      <div className="px-6 pt-16 pb-10" style={{ backgroundColor: '#0C3B2E' }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#F5F5F0" }}
+    >
+      <div className="px-6 pt-16 pb-10" style={{ backgroundColor: "#0C3B2E" }}>
+        <img
+          src="/FirstPilotLogo.svg"
+          alt="SchoolPilot"
+          className="h-16 w-auto object-contain"
+        />
         <button
-          onClick={() => navigate('/login')}
+          onClick={() => navigate("/login")}
           className="text-sm mb-6 flex items-center gap-1"
-          style={{ color: '#6D9773', fontFamily: 'Poppins, sans-serif' }}
+          style={{ color: "#6D9773", fontFamily: "Poppins, sans-serif" }}
         >
           ← Back to Login
         </button>
         <h1
           className="text-3xl font-bold text-white mb-2"
-          style={{ fontFamily: 'Poppins, sans-serif' }}
+          style={{ fontFamily: "Poppins, sans-serif" }}
         >
           Create Account 👋
         </h1>
         <p
           className="text-sm"
-          style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}
+          style={{ color: "#6D9773", fontFamily: "Lora, serif" }}
         >
           Register as a parent to monitor your child's progress
         </p>
@@ -71,11 +86,10 @@ export const ParentRegister = () => {
 
       <div className="flex-1 px-6 -mt-4">
         <div className="bg-white rounded-3xl shadow-sm p-6">
-
           {error && (
             <div
               className="mb-4 px-4 py-3 rounded-xl text-sm"
-              style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}
+              style={{ backgroundColor: "#fef2f2", color: "#dc2626" }}
             >
               {error}
             </div>
@@ -86,7 +100,10 @@ export const ParentRegister = () => {
               <div className="flex flex-col gap-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                  style={{
+                    color: "#0C3B2E",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
                 >
                   First Name
                 </label>
@@ -94,17 +111,25 @@ export const ParentRegister = () => {
                   type="text"
                   placeholder="John"
                   value={form.firstName}
-                  onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, firstName: e.target.value })
+                  }
                   className="w-full rounded-2xl border-2 px-3 py-3 text-sm outline-none"
-                  style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
-                  onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  style={{
+                    borderColor: "#e5e7eb",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#0C3B2E")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                  style={{
+                    color: "#0C3B2E",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
                 >
                   Last Name
                 </label>
@@ -112,11 +137,16 @@ export const ParentRegister = () => {
                   type="text"
                   placeholder="Doe"
                   value={form.lastName}
-                  onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, lastName: e.target.value })
+                  }
                   className="w-full rounded-2xl border-2 px-3 py-3 text-sm outline-none"
-                  style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
-                  onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  style={{
+                    borderColor: "#e5e7eb",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#0C3B2E")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 />
               </div>
             </div>
@@ -124,7 +154,7 @@ export const ParentRegister = () => {
             <div className="flex flex-col gap-1.5">
               <label
                 className="text-xs font-semibold uppercase tracking-wider"
-                style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                style={{ color: "#0C3B2E", fontFamily: "Poppins, sans-serif" }}
               >
                 Email Address
               </label>
@@ -134,16 +164,19 @@ export const ParentRegister = () => {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full rounded-2xl border-2 px-4 py-3 text-sm outline-none"
-                style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
-                onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                style={{
+                  borderColor: "#e5e7eb",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#0C3B2E")}
+                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label
                 className="text-xs font-semibold uppercase tracking-wider"
-                style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                style={{ color: "#0C3B2E", fontFamily: "Poppins, sans-serif" }}
               >
                 Phone Number
               </label>
@@ -153,29 +186,37 @@ export const ParentRegister = () => {
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 className="w-full rounded-2xl border-2 px-4 py-3 text-sm outline-none"
-                style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
-                onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                style={{
+                  borderColor: "#e5e7eb",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#0C3B2E")}
+                onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label
                 className="text-xs font-semibold uppercase tracking-wider"
-                style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                style={{ color: "#0C3B2E", fontFamily: "Poppins, sans-serif" }}
               >
                 Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Min. 6 characters"
                   value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
                   className="w-full rounded-2xl border-2 px-4 py-3 text-sm outline-none pr-12"
-                  style={{ borderColor: '#e5e7eb', fontFamily: 'Poppins, sans-serif' }}
-                  onFocus={(e) => e.target.style.borderColor = '#0C3B2E'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  style={{
+                    borderColor: "#e5e7eb",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#0C3B2E")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 />
                 <button
                   type="button"
@@ -192,24 +233,24 @@ export const ParentRegister = () => {
               disabled={isLoading}
               className="w-full py-4 rounded-2xl text-sm font-bold transition-all mt-2"
               style={{
-                backgroundColor: '#FFBA00',
-                color: '#0C3B2E',
-                fontFamily: 'Poppins, sans-serif',
+                backgroundColor: "#FFBA00",
+                color: "#0C3B2E",
+                fontFamily: "Poppins, sans-serif",
                 opacity: isLoading ? 0.6 : 1,
               }}
             >
-              {isLoading ? 'Creating account...' : 'Create Account →'}
+              {isLoading ? "Creating account..." : "Create Account →"}
             </button>
 
             <p
               className="text-center text-sm"
-              style={{ color: '#6b7280', fontFamily: 'Lora, serif' }}
+              style={{ color: "#6b7280", fontFamily: "Lora, serif" }}
             >
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="font-semibold"
-                style={{ color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
+                style={{ color: "#0C3B2E", fontFamily: "Poppins, sans-serif" }}
               >
                 Sign in
               </button>
@@ -218,5 +259,5 @@ export const ParentRegister = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

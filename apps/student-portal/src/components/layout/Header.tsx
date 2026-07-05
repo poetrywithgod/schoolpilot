@@ -44,7 +44,7 @@ export const Header = ({ title, showBack, showNotification = true }: HeaderProps
 
       {!showBack && student?.schoolLogoUrl && (
         <img
-          src={student.schoolLogoUrl}
+          src="/FirstPilotLogo.svg"
           alt="School"
           className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shrink-0"
         />

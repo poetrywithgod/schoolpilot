@@ -115,21 +115,21 @@ export const AppLayout = () => {
           className="flex items-center gap-3 px-4 shrink-0"
           style={{ height: '64px', borderBottom: '1px solid rgba(109,151,115,0.15)' }}
         >
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-black text-sm"
-            style={{ backgroundColor: '#FFBA00', color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
-          >
-            S
-          </div>
-          {!collapsed && (
-            <div className="overflow-hidden">
-              <p className="text-white font-bold text-sm leading-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                SchoolPilot
-              </p>
-              <p className="text-xs" style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}>
-                Super Admin
-              </p>
-            </div>
+          {collapsed ? (
+            /* Collapsed: show just the owl icon mark */
+            <img
+              src="/FirstPilotLogo.svg"
+              alt="SchoolPilot"
+              className="w-9 h-9 shrink-0 object-contain"
+            />
+          ) : (
+            /* Expanded: show full logo */
+            <img
+            src="/FirstPilotLogo.svg"
+            alt="SchoolPilot"
+            className="h-9 w-auto object-contain"
+            style={{ maxWidth: '180px' }}
+          />
           )}
         </div>
 
@@ -247,14 +247,13 @@ export const AppLayout = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
-              {/* Notification dot */}
               <span
                 className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
                 style={{ backgroundColor: '#FFBA00' }}
               />
             </button>
 
-            {/* Avatar */}
+            {/* Avatar with initials fallback */}
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold cursor-pointer"
               style={{ backgroundColor: '#FFBA00', color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}

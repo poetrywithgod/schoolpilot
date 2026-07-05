@@ -133,12 +133,7 @@ export const Login = () => {
       {/* Header */}
       <div className="px-6 pt-16 pb-10" style={{ backgroundColor: '#0C3B2E' }}>
         <div className="flex items-center gap-3 mb-8">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: '#FFBA00' }}
-          >
-            <span className="font-black text-lg" style={{ color: '#0C3B2E' }}>S</span>
-          </div>
+          <img src="/FirstPilotLogo.svg" alt="SchoolPilot" className="h-16 w-auto object-contain" />
           <span
             className="text-white font-bold text-xl"
             style={{ fontFamily: 'Poppins, sans-serif' }}

@@ -64,21 +64,15 @@ export const Login = () => {
 
       <div className="w-full max-w-md relative">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl"
-            style={{ backgroundColor: '#FFBA00', color: '#0C3B2E', fontFamily: 'Poppins, sans-serif' }}
-          >
-            S
-          </div>
-          <div>
-            <p className="text-white font-bold text-xl" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              SchoolPilot
-            </p>
-            <p className="text-xs" style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}>
-              Super Admin Console
-            </p>
-          </div>
+        <div className="flex flex-col items-center mb-8 gap-3">
+          <img
+            src="/FirstPilotLogo.svg"
+            alt="SchoolPilot"
+            className="h-16 w-auto object-contain"
+          />
+          <p className="text-xs" style={{ color: '#6D9773', fontFamily: 'Lora, serif' }}>
+            Super Admin Console
+          </p>
         </div>
 
         {/* Card */}
