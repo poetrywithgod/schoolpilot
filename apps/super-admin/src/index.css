@@ -68,3 +68,16 @@ h1, h2, h3, h4, h5, h6 {
   to { opacity: 1; transform: translateY(0); }
 }
 .count-up { animation: countUp 0.5s ease forwards; }
+
+/* Fix native browser control styling (number spinners, date picker icon)
+   to match dark theme instead of rendering light-mode defaults */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="number"] {
+  color-scheme: dark;
+}
+
+select {
+  color-scheme: dark;
+}

@@ -351,14 +351,14 @@ export const SchoolDetail = () => {
               <div className="flex justify-between">
                 <span style={{ color: "#6D9773" }}>Amount</span>
                 <span className="text-white">
-                  ₦{(subscription.amount ?? 0).toLocaleString()}
+                  ₦{(subscription.amount_naira ?? 0).toLocaleString()}
                 </span>
               </div>
-              {subscription.ends_at && (
+              {subscription.current_period_end && (
                 <div className="flex justify-between">
                   <span style={{ color: "#6D9773" }}>Renews / Ends</span>
                   <span className="text-white">
-                    {new Date(subscription.ends_at).toLocaleDateString()}
+                    {new Date(subscription.current_period_end).toLocaleDateString()}
                   </span>
                 </div>
               )}

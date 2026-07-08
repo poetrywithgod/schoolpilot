@@ -35,12 +35,33 @@ export interface Subscription {
   school_id: string
   plan: SubscriptionPlan
   status: SubscriptionStatus
-  amount: number
-  currency: string
-  starts_at: string | null
-  ends_at: string | null
+  student_limit: number | null
   trial_ends_at: string | null
+  current_period_start: string | null
+  current_period_end: string | null
+  amount_naira: number | null
+  payment_reference: string | null
+  auto_renew: boolean
+  warning_sent_at: string | null
+  expired_warning_sent_at: string | null
+  suspended_at: string | null
+  cancelled_at: string | null
+  notes: string | null
   created_at: string
+  updated_at: string
+}
+
+export interface SchoolSubscriptionRow {
+  subscription_id: string | null
+  school_id: string
+  school_name: string
+  school_slug: string
+  logo_url: string | null
+  plan: SubscriptionPlan | null
+  status: SubscriptionStatus | null
+  amount_naira: number | null
+  current_period_end: string | null
+  trial_ends_at: string | null
 }
 
 export interface OnboardingChecklist {
