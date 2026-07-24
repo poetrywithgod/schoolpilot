@@ -1,6 +1,7 @@
 // apps/super-admin/src/components/ui/Select.tsx
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronDown, Check } from 'lucide-react'
 
 interface SelectOption {
@@ -17,11 +18,17 @@ interface SelectProps {
 
 export const Select = ({ value, onChange, options, disabled }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 })
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setIsOpen(false)
       }
     }
@@ -29,14 +36,23 @@ export const Select = ({ value, onChange, options, disabled }: SelectProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const openDropdown = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setCoords({ top: rect.bottom + 6, left: rect.left, width: rect.width })
+    }
+    setIsOpen((prev) => !prev)
+  }
+
   const selected = options.find((o) => o.value === value)
 
   return (
-    <div ref={containerRef} className="relative">
+    <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={openDropdown}
         className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm text-white outline-none border capitalize disabled:opacity-60 transition-colors"
         style={{
           backgroundColor: '#081f19',
@@ -44,21 +60,27 @@ export const Select = ({ value, onChange, options, disabled }: SelectProps) => {
           fontFamily: 'Lora, serif',
         }}
       >
-        <span>{selected?.label ?? 'Select...'}</span>
+        <span className="truncate">{selected?.label ?? 'Select...'}</span>
         <ChevronDown
           size={16}
           style={{
             color: '#6D9773',
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.15s ease',
+            flexShrink: 0,
+            marginLeft: 6,
           }}
         />
       </button>
 
-      {isOpen && (
+      {isOpen && createPortal(
         <div
-          className="absolute z-50 w-full mt-1.5 rounded-xl border overflow-hidden shadow-lg"
+          ref={dropdownRef}
+          className="fixed z-[9999] rounded-xl border overflow-hidden shadow-lg"
           style={{
+            top: coords.top,
+            left: coords.left,
+            width: coords.width,
             backgroundColor: '#0C3B2E',
             borderColor: 'rgba(109,151,115,0.25)',
           }}
@@ -85,7 +107,8 @@ export const Select = ({ value, onChange, options, disabled }: SelectProps) => {
               </button>
             )
           })}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
