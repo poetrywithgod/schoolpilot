@@ -1,45 +1,48 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { ProtectedRoute } from './ProtectedRoute'
-import { Login } from '../pages/auth/Login'
-import { AdminDashboard } from '../pages/dashboard/AdminDashboard'
-import { TeacherDashboard } from '../pages/dashboard/TeacherDashboard'
-import { BursarDashboard } from '../pages/dashboard/BursarDashboard'
-import { NotFound } from '../pages/NotFound'
-import { Unauthorized } from '../pages/Unauthorized'
-import { useAuthStore } from '../store/authStore'
-import { SchoolProfile } from '../pages/settings/SchoolProfile'
-import { SessionManager } from '../pages/settings/SessionManager'
-import { ClassList } from '../pages/classes/ClassList'
-import { SubjectList } from '../pages/classes/SubjectList'
-import { StaffList } from '../pages/staff/StaffList'
-import { StudentList } from '../pages/students/StudentList'
-import { CreateStudent } from '../pages/students/CreateStudent'
-import { StudentDetail } from '../pages/students/StudentDetail'
-import { MarkAttendance } from '../pages/attendance/MarkAttendance'
-import { ScoreEntry } from '../pages/results/ScoreEntry'
-import { ReportCardGenerator } from '../pages/results/ReportCardGenerator'
-import { FeeSetup } from '../pages/payments/FeeSetup'
-import { AnnouncementList } from '../pages/announcements/AnnouncementList'
-import { IDCardGenerator } from '../pages/students/IDCardGenerator'
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { Login } from "../pages/auth/Login";
+import { AdminDashboard } from "../pages/dashboard/AdminDashboard";
+import { TeacherDashboard } from "../pages/dashboard/TeacherDashboard";
+import { BursarDashboard } from "../pages/dashboard/BursarDashboard";
+import { NotFound } from "../pages/NotFound";
+import { Unauthorized } from "../pages/Unauthorized";
+import { useAuthStore } from "../store/authStore";
+import { SchoolProfile } from "../pages/settings/SchoolProfile";
+import { SessionManager } from "../pages/settings/SessionManager";
+import { ClassList } from "../pages/classes/ClassList";
+import { SubjectList } from "../pages/classes/SubjectList";
+import { StaffList } from "../pages/staff/StaffList";
+import { StudentList } from "../pages/students/StudentList";
+import { CreateStudent } from "../pages/students/CreateStudent";
+import { StudentDetail } from "../pages/students/StudentDetail";
+import { MarkAttendance } from "../pages/attendance/MarkAttendance";
+import { ScoreEntry } from "../pages/results/ScoreEntry";
+import { ReportCardGenerator } from "../pages/results/ReportCardGenerator";
+import { FeeSetup } from "../pages/payments/FeeSetup";
+import { AnnouncementList } from "../pages/announcements/AnnouncementList";
+import { IDCardGenerator } from "../pages/students/IDCardGenerator";
+import { SupportList } from "../pages/support/SupportList";
+import { NewTicket } from "../pages/support/NewTicket";
+import { TicketDetail } from "../pages/support/TicketDetail";
 
 const DashboardRouter = () => {
-  const { user } = useAuthStore()
-  if (user?.role === 'teacher') return <TeacherDashboard />
-  if (user?.role === 'bursar') return <BursarDashboard />
-  return <AdminDashboard />
-}
+  const { user } = useAuthStore();
+  if (user?.role === "teacher") return <TeacherDashboard />;
+  if (user?.role === "bursar") return <BursarDashboard />;
+  return <AdminDashboard />;
+};
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/',
+    path: "/",
     element: <Navigate to="/dashboard" replace />,
   },
   {
-    path: '/dashboard',
+    path: "/dashboard",
     element: (
       <ProtectedRoute>
         <DashboardRouter />
@@ -47,95 +50,119 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/students',
+    path: "/students",
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+      <ProtectedRoute allowedRoles={["admin", "teacher"]}>
         <StudentList />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/students/create',
+    path: "/students/create",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <CreateStudent />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/students/:id',
+    path: "/students/:id",
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+      <ProtectedRoute allowedRoles={["admin", "teacher"]}>
         <StudentDetail />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/staff',
+    path: "/staff",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <StaffList />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/classes',
+    path: "/classes",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <ClassList />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/subjects',
+    path: "/subjects",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <SubjectList />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/attendance',
+    path: "/attendance",
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+      <ProtectedRoute allowedRoles={["admin", "teacher"]}>
         <MarkAttendance />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/results',
+    path: "/results",
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+      <ProtectedRoute allowedRoles={["admin", "teacher"]}>
         <ScoreEntry />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/report-cards',
+    path: "/report-cards",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <ReportCardGenerator />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/payments',
+    path: "/payments",
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'bursar']}>
+      <ProtectedRoute allowedRoles={["admin", "bursar"]}>
         <FeeSetup />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/id-cards',
+    path: "/id-cards",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <IDCardGenerator />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/announcements',
+    path: "/support",
+    element: (
+      <ProtectedRoute>
+        <SupportList />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/support/new",
+    element: (
+      <ProtectedRoute>
+        <NewTicket />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/support/:id",
+    element: (
+      <ProtectedRoute>
+        <TicketDetail />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/announcements",
     element: (
       <ProtectedRoute>
         <AnnouncementList />
@@ -143,27 +170,27 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/settings',
+    path: "/settings",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <SchoolProfile />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/settings/sessions',
+    path: "/settings/sessions",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <SessionManager />
       </ProtectedRoute>
     ),
   },
   {
-    path: '/unauthorized',
+    path: "/unauthorized",
     element: <Unauthorized />,
   },
   {
-    path: '*',
+    path: "*",
     element: <NotFound />,
   },
-])
+]);

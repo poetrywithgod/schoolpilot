@@ -4,6 +4,7 @@ packages:
   - 'pdf-service'
 
 allowBuilds:
+  '@sentry/cli': true
   esbuild: set this to true or false
 
 onlyBuiltDependencies:

@@ -3,5 +3,6 @@ packages:
   - "packages/*"
   - "pdf-service"
 allowBuilds:
+  '@sentry/cli': true
   esbuild: true
   puppeteer: true

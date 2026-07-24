@@ -27,3 +27,6 @@ Thumbs.db
 # Supabase
 supabase/.branches
 supabase/.temppdf-service/.env
+.env.sentry-build-plugin
+apps/*/.env.sentry-build-plugin
+schoolpilot/
