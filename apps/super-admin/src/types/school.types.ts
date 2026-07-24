@@ -116,3 +116,29 @@ export interface EnrollmentDataPoint {
   year: string
   students: number
 }
+
+export type OnboardingStage =
+  | 'not_started'
+  | 'setting_up'
+  | 'adding_data'
+  | 'getting_active'
+  | 'fully_live'
+
+export interface OnboardingPipelineCard {
+  school_id: string
+  school_name: string
+  school_slug: string
+  logo_url: string | null
+  created_at: string
+  stage: OnboardingStage
+  completed_steps: number
+  total_steps: number
+}
+
+export const ONBOARDING_STAGE_LABELS: Record<OnboardingStage, string> = {
+  not_started: 'Not Started',
+  setting_up: 'Setting Up',
+  adding_data: 'Adding Data',
+  getting_active: 'Getting Active',
+  fully_live: 'Fully Live',
+}
