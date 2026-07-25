@@ -1,5 +1,6 @@
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
+import { BroadcastBanner } from './BroadcastBanner'
 
 interface PageWrapperProps {
   title: string
@@ -12,6 +13,7 @@ export const PageWrapper = ({ title, children }: PageWrapperProps) => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar title={title} />
+        <BroadcastBanner />
         <main className="flex-1 p-6">
           {children}
         </main>
