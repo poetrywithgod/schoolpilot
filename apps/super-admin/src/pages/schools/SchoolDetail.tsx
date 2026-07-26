@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 import {
   ArrowLeft,
   MapPin,
@@ -41,6 +42,7 @@ import {
 export const SchoolDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const admin = useAuthStore((s) => s.admin);
 
   const [school, setSchool] = useState<SchoolWithStats | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -83,7 +85,7 @@ export const SchoolDetail = () => {
     if (!id || !suspendReason.trim()) return;
     try {
       setActionLoading(true);
-      await suspendSchool(id, suspendReason.trim());
+      await suspendSchool(id, suspendReason.trim(), admin?.id ?? "", `${admin?.firstName ?? ""} ${admin?.lastName ?? ""}`.trim(), school?.name ?? "");
       await loadAll(id);
       setShowSuspendModal(false);
       setSuspendReason("");
@@ -98,7 +100,7 @@ export const SchoolDetail = () => {
     if (!id) return;
     try {
       setActionLoading(true);
-      await activateSchool(id);
+      await activateSchool(id, admin?.id ?? "", `${admin?.firstName ?? ""} ${admin?.lastName ?? ""}`.trim(), school?.name ?? "");
       await loadAll(id);
     } catch (err) {
       console.error(err);

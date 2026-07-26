@@ -1,6 +1,7 @@
 // apps/super-admin/src/services/broadcast.service.ts
 
 import { supabase } from '../lib/supabase'
+import { logAuditEvent } from './audit.service'
 import type { Broadcast, BroadcastWithSender, BroadcastTarget, BroadcastType } from '../types/broadcast.types'
 
 async function getAdminNameMap(adminIds: string[]) {
@@ -33,6 +34,7 @@ export async function getBroadcasts(): Promise<BroadcastWithSender[]> {
 
 export async function createBroadcast(input: {
   sentBy: string
+  sentByName: string
   title: string
   body: string
   target: BroadcastTarget
@@ -58,10 +60,33 @@ export async function createBroadcast(input: {
     .single()
 
   if (error) throw error
+
+  await logAuditEvent({
+    actorId: input.sentBy,
+    actorName: input.sentByName,
+    action: input.publishNow ? 'create_and_publish_broadcast' : 'create_broadcast_draft',
+    entityType: 'broadcast',
+    entityId: data.id,
+    entityLabel: input.title,
+    oldValues: null,
+    newValues: {
+      title: input.title,
+      target: input.target,
+      type: input.type,
+      is_published: input.publishNow,
+    },
+  })
+
   return data
 }
 
-export async function setBroadcastPublished(id: string, isPublished: boolean): Promise<void> {
+export async function setBroadcastPublished(
+  id: string,
+  isPublished: boolean,
+  actorId: string,
+  actorName: string,
+  title: string
+): Promise<void> {
   const { error } = await supabase
     .from('broadcasts')
     .update({
@@ -71,9 +96,36 @@ export async function setBroadcastPublished(id: string, isPublished: boolean): P
     .eq('id', id)
 
   if (error) throw error
+
+  await logAuditEvent({
+    actorId,
+    actorName,
+    action: isPublished ? 'publish_broadcast' : 'unpublish_broadcast',
+    entityType: 'broadcast',
+    entityId: id,
+    entityLabel: title,
+    oldValues: { is_published: !isPublished },
+    newValues: { is_published: isPublished },
+  })
 }
 
-export async function deleteBroadcast(id: string): Promise<void> {
+export async function deleteBroadcast(
+  id: string,
+  actorId: string,
+  actorName: string,
+  title: string
+): Promise<void> {
   const { error } = await supabase.from('broadcasts').delete().eq('id', id)
   if (error) throw error
+
+  await logAuditEvent({
+    actorId,
+    actorName,
+    action: 'delete_broadcast',
+    entityType: 'broadcast',
+    entityId: id,
+    entityLabel: title,
+    oldValues: { title },
+    newValues: null,
+  })
 }

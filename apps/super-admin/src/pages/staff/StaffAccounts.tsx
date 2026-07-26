@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Plus, ShieldCheck, ShieldOff } from "lucide-react";
 import { toast } from "sonner";
 import { Select } from "../../components/ui/Select";
+import { useAuthStore } from "../../store/authStore";
 import {
   getSuperAdmins,
   updateSuperAdminRole,
@@ -31,6 +32,7 @@ const getErrorMessage = (error: unknown, fallback = "Something went wrong") => {
 };
 
 export const StaffAccounts = () => {
+  const currentAdmin = useAuthStore((s) => s.admin);
   const [admins, setAdmins] = useState<SuperAdminAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -60,9 +62,19 @@ export const StaffAccounts = () => {
   }, [loadAdmins]);
 
   const handleRoleChange = async (id: string, newRole: string) => {
+    if (!currentAdmin) return;
+    const target = admins.find((a) => a.id === id);
+    if (!target) return;
     try {
       setUpdatingId(id);
-      await updateSuperAdminRole(id, newRole as SuperAdminRole);
+      await updateSuperAdminRole(
+        id,
+        newRole as SuperAdminRole,
+        currentAdmin.id,
+        `${currentAdmin.firstName} ${currentAdmin.lastName}`.trim(),
+        `${target.first_name} ${target.last_name}`.trim(),
+        target.role
+      );
       await loadAdmins();
       toast.success("Role updated.");
     } catch (err) {
@@ -74,9 +86,16 @@ export const StaffAccounts = () => {
   };
 
   const handleToggleActive = async (admin: SuperAdminAccount) => {
+    if (!currentAdmin) return;
     try {
       setUpdatingId(admin.id);
-      await setSuperAdminActive(admin.id, !admin.is_active);
+      await setSuperAdminActive(
+        admin.id,
+        !admin.is_active,
+        currentAdmin.id,
+        `${currentAdmin.firstName} ${currentAdmin.lastName}`.trim(),
+        `${admin.first_name} ${admin.last_name}`.trim()
+      );
       await loadAdmins();
       toast.success(admin.is_active ? "Account deactivated." : "Account reactivated.");
     } catch (err) {
@@ -123,7 +142,7 @@ export const StaffAccounts = () => {
           <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
             Staff Accounts
           </h1>
-          <p className="text-sm mt-1" style={{ color: "#6D9773", fontFamily: "Lora, serif" }}>
+          <p className="text-sm mt-1" style={{ color: "#6D9773", fontFamily: "Lora,serif" }}>
             {admins.length} team member{admins.length === 1 ? "" : "s"} with dashboard access
           </p>
         </div>

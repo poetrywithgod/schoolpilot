@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Edit3, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Select } from "../../components/ui/Select";
+import { useAuthStore } from "../../store/authStore";
 import {
   getAllSubscriptions,
   upsertSubscription,
@@ -52,6 +53,7 @@ const getErrorMessage = (error: unknown, fallback = "Something went wrong") => {
 };
 
 export const Subscriptions = () => {
+  const admin = useAuthStore((s) => s.admin);
   const [rows, setRows] = useState<SchoolSubscriptionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -164,6 +166,9 @@ export const Subscriptions = () => {
             ? new Date(formEndsAt).toISOString()
             : null,
         },
+        admin?.id ?? "",
+        `${admin?.firstName ?? ""} ${admin?.lastName ?? ""}`.trim(),
+        editingRow.school_name,
       );
 
       toast.success(`Subscription updated for ${editingRow.school_name}.`);

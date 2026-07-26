@@ -1,6 +1,7 @@
 // apps/super-admin/src/services/admin.service.ts
 
 import { supabase } from '../lib/supabase'
+import { logAuditEvent } from './audit.service'
 import type { SuperAdminAccount, SuperAdminRole } from '../types/admin.types'
 
 export async function getSuperAdmins(): Promise<SuperAdminAccount[]> {
@@ -13,14 +14,49 @@ export async function getSuperAdmins(): Promise<SuperAdminAccount[]> {
   return data ?? []
 }
 
-export async function updateSuperAdminRole(id: string, role: SuperAdminRole): Promise<void> {
+export async function updateSuperAdminRole(
+  id: string,
+  role: SuperAdminRole,
+  actorId: string,
+  actorName: string,
+  targetName: string,
+  previousRole: SuperAdminRole
+): Promise<void> {
   const { error } = await supabase.from('super_admins').update({ role }).eq('id', id)
   if (error) throw error
+
+  await logAuditEvent({
+    actorId,
+    actorName,
+    action: 'update_admin_role',
+    entityType: 'super_admin',
+    entityId: id,
+    entityLabel: targetName,
+    oldValues: { role: previousRole },
+    newValues: { role },
+  })
 }
 
-export async function setSuperAdminActive(id: string, isActive: boolean): Promise<void> {
+export async function setSuperAdminActive(
+  id: string,
+  isActive: boolean,
+  actorId: string,
+  actorName: string,
+  targetName: string
+): Promise<void> {
   const { error } = await supabase.from('super_admins').update({ is_active: isActive }).eq('id', id)
   if (error) throw error
+
+  await logAuditEvent({
+    actorId,
+    actorName,
+    action: isActive ? 'reactivate_admin' : 'deactivate_admin',
+    entityType: 'super_admin',
+    entityId: id,
+    entityLabel: targetName,
+    oldValues: { is_active: !isActive },
+    newValues: { is_active: isActive },
+  })
 }
 
 export async function createSuperAdmin(input: {

@@ -2,6 +2,7 @@
 
 import { supabase } from '../lib/supabase'
 import { ONBOARDING_STEPS } from '../types/school.types'
+import { logAuditEvent } from './audit.service'
 import type {
   SchoolWithStats,
   Subscription,
@@ -72,7 +73,13 @@ export async function getSchoolById(schoolId: string): Promise<SchoolWithStats> 
   }
 }
 
-export async function suspendSchool(schoolId: string, reason: string): Promise<void> {
+export async function suspendSchool(
+  schoolId: string,
+  reason: string,
+  actorId: string,
+  actorName: string,
+  schoolName: string
+): Promise<void> {
   const { error } = await supabase
     .from('schools')
     .update({
@@ -84,9 +91,26 @@ export async function suspendSchool(schoolId: string, reason: string): Promise<v
     .eq('id', schoolId)
 
   if (error) throw error
+
+  await logAuditEvent({
+    schoolId,
+    actorId,
+    actorName,
+    action: 'suspend_school',
+    entityType: 'school',
+    entityId: schoolId,
+    entityLabel: schoolName,
+    oldValues: { is_suspended: false, is_active: true },
+    newValues: { is_suspended: true, is_active: false, suspension_reason: reason },
+  })
 }
 
-export async function activateSchool(schoolId: string): Promise<void> {
+export async function activateSchool(
+  schoolId: string,
+  actorId: string,
+  actorName: string,
+  schoolName: string
+): Promise<void> {
   const { error } = await supabase
     .from('schools')
     .update({
@@ -98,6 +122,18 @@ export async function activateSchool(schoolId: string): Promise<void> {
     .eq('id', schoolId)
 
   if (error) throw error
+
+  await logAuditEvent({
+    schoolId,
+    actorId,
+    actorName,
+    action: 'activate_school',
+    entityType: 'school',
+    entityId: schoolId,
+    entityLabel: schoolName,
+    oldValues: { is_suspended: true, is_active: false },
+    newValues: { is_suspended: false, is_active: true },
+  })
 }
 
 export async function getSchoolSubscription(schoolId: string): Promise<Subscription | null> {

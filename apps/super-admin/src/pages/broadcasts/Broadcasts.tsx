@@ -60,7 +60,7 @@ export const Broadcasts = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [type, setType] = useState<BroadcastType>("info");
-  const [target, setTarget] = useState<BroadcastTarget>("all");
+  const [target, setTarget] = useState<BroadcastTarget>("all_schools");
   const [selectedSchoolIds, setSelectedSchoolIds] = useState<string[]>([]);
   const [expiresAt, setExpiresAt] = useState("");
   const [creating, setCreating] = useState(false);
@@ -87,7 +87,7 @@ export const Broadcasts = () => {
     setTitle("");
     setBody("");
     setType("info");
-    setTarget("all");
+    setTarget("all_schools");
     setSelectedSchoolIds([]);
     setExpiresAt("");
   };
@@ -108,6 +108,7 @@ export const Broadcasts = () => {
       setCreating(true);
       await createBroadcast({
         sentBy: admin.id,
+        sentByName: `${admin.firstName} ${admin.lastName}`.trim(),
         title: title.trim(),
         body: body.trim(),
         target,
@@ -129,9 +130,16 @@ export const Broadcasts = () => {
   };
 
   const handleTogglePublish = async (broadcast: BroadcastWithSender) => {
+    if (!admin) return;
     try {
       setUpdatingId(broadcast.id);
-      await setBroadcastPublished(broadcast.id, !broadcast.is_published);
+      await setBroadcastPublished(
+        broadcast.id,
+        !broadcast.is_published,
+        admin.id,
+        `${admin.firstName} ${admin.lastName}`.trim(),
+        broadcast.title
+      );
       await loadAll();
       toast.success(broadcast.is_published ? "Unpublished." : "Published.");
     } catch (err) {
@@ -142,11 +150,17 @@ export const Broadcasts = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (broadcast: BroadcastWithSender) => {
+    if (!admin) return;
     if (!confirm("Delete this broadcast? This cannot be undone.")) return;
     try {
-      setUpdatingId(id);
-      await deleteBroadcast(id);
+      setUpdatingId(broadcast.id);
+      await deleteBroadcast(
+        broadcast.id,
+        admin.id,
+        `${admin.firstName} ${admin.lastName}`.trim(),
+        broadcast.title
+      );
       await loadAll();
       toast.success("Broadcast deleted.");
     } catch (err) {
@@ -247,7 +261,7 @@ export const Broadcasts = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => void handleDelete(b.id)}
+                      onClick={() => void handleDelete(b)}
                       disabled={updatingId === b.id}
                       className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
                       style={{ backgroundColor: "rgba(220,38,38,0.1)", color: "#f87171" }}

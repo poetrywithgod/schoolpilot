@@ -1,6 +1,7 @@
 // apps/super-admin/src/services/subscription.service.ts
 
 import { supabase } from '../lib/supabase'
+import { logAuditEvent } from './audit.service'
 import type {
   SchoolSubscriptionRow,
   SubscriptionPlan,
@@ -57,9 +58,18 @@ interface UpdateSubscriptionInput {
 export async function upsertSubscription(
   schoolId: string,
   subscriptionId: string | null,
-  input: UpdateSubscriptionInput
+  input: UpdateSubscriptionInput,
+  actorId: string,
+  actorName: string,
+  schoolName: string
 ): Promise<void> {
   if (subscriptionId) {
+    const { data: before } = await supabase
+      .from('subscriptions')
+      .select('plan, status, amount_naira, current_period_end')
+      .eq('id', subscriptionId)
+      .maybeSingle()
+
     const { error } = await supabase
       .from('subscriptions')
       .update({
@@ -71,17 +81,55 @@ export async function upsertSubscription(
       .eq('id', subscriptionId)
 
     if (error) throw error
-  } else {
-    const { error } = await supabase.from('subscriptions').insert({
-      school_id: schoolId,
-      plan: input.plan,
-      status: input.status,
-      amount_naira: input.amount_naira,
-      current_period_start: new Date().toISOString(),
-      current_period_end: input.current_period_end,
-      auto_renew: false,
+
+    await logAuditEvent({
+      schoolId,
+      actorId,
+      actorName,
+      action: 'update_subscription',
+      entityType: 'subscription',
+      entityId: subscriptionId,
+      entityLabel: schoolName,
+      oldValues: before ?? null,
+      newValues: {
+        plan: input.plan,
+        status: input.status,
+        amount_naira: input.amount_naira,
+        current_period_end: input.current_period_end,
+      },
     })
+  } else {
+    const { data: created, error } = await supabase
+      .from('subscriptions')
+      .insert({
+        school_id: schoolId,
+        plan: input.plan,
+        status: input.status,
+        amount_naira: input.amount_naira,
+        current_period_start: new Date().toISOString(),
+        current_period_end: input.current_period_end,
+        auto_renew: false,
+      })
+      .select('id')
+      .single()
 
     if (error) throw error
+
+    await logAuditEvent({
+      schoolId,
+      actorId,
+      actorName,
+      action: 'create_subscription',
+      entityType: 'subscription',
+      entityId: created?.id ?? null,
+      entityLabel: schoolName,
+      oldValues: null,
+      newValues: {
+        plan: input.plan,
+        status: input.status,
+        amount_naira: input.amount_naira,
+        current_period_end: input.current_period_end,
+      },
+    })
   }
 }
