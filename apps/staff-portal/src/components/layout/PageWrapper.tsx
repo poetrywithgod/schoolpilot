@@ -9,14 +9,12 @@ interface PageWrapperProps {
 
 export const PageWrapper = ({ title, children }: PageWrapperProps) => {
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
+    <div className="flex min-h-screen bg-offwhite transition-colors dark:bg-forest-dark">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Topbar title={title} />
         <BroadcastBanner />
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>
   )

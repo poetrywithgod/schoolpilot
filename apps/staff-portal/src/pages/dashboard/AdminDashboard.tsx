@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { PageWrapper } from '../../components/layout/PageWrapper'
 import { useAuthStore } from '../../store/authStore'
 import { supabase } from '../../lib/supabase'
+import { StatCard } from '../../components/ui/StatCard'
+import { QuickLinks } from '../../components/ui/QuickLinks'
+import { UserPlus, ClipboardCheck, BarChart3, Wallet } from 'lucide-react'
 
 export const AdminDashboard = () => {
   const { user } = useAuthStore()
@@ -55,49 +58,35 @@ export const AdminDashboard = () => {
 
   return (
     <PageWrapper title="Dashboard">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          {
-            label: 'Total Students',
-            value: stats.students.toString(),
-            color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-            icon: '🎓',
-          },
-          {
-            label: 'Total Staff',
-            value: stats.staff.toString(),
-            color: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-            icon: '👨‍🏫',
-          },
-          {
-            label: 'Fee Collection',
-            value: `₦${stats.feeCollection.toLocaleString()}`,
-            color: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
-            icon: '💰',
-          },
-          {
-            label: 'Pending Results',
-            value: stats.pendingResults.toString(),
-            color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
-            icon: '📊',
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className={`inline-flex px-3 py-1 rounded-lg text-xs font-medium ${stat.color}`}>
-                {stat.label}
-              </span>
-              <span className="text-2xl">{stat.icon}</span>
-            </div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">
-              {stat.value}
-            </p>
-          </div>
-        ))}
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-forest dark:text-white">
+          Welcome back{user?.firstName ? `, ${user.firstName}` : ''}
+        </h2>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Here is how your school is doing today.
+        </p>
       </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard hero label="Total Students" value={stats.students.toLocaleString()} sub="Active enrolments" />
+        <StatCard label="Total Staff" value={stats.staff.toLocaleString()} sub="Active staff accounts" />
+        <StatCard
+          label="Fee Collection"
+          value={`₦${stats.feeCollection.toLocaleString()}`}
+          sub="Successful payments"
+          accent="#BB8A52"
+        />
+        <StatCard label="Pending Results" value={stats.pendingResults.toLocaleString()} sub="Awaiting score entry" />
+      </div>
+
+      <QuickLinks
+        links={[
+          { label: 'Add a student', description: 'Enrol a new student', to: '/students/create', icon: UserPlus },
+          { label: 'Mark attendance', description: 'Record today\'s register', to: '/attendance', icon: ClipboardCheck },
+          { label: 'Enter scores', description: 'Record term assessments', to: '/results', icon: BarChart3 },
+          { label: 'Fee tracker', description: 'Review payments', to: '/payments', icon: Wallet },
+        ]}
+      />
     </PageWrapper>
   )
 }

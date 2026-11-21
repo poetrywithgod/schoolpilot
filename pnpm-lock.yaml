@@ -48,6 +48,9 @@ importers:
 
   apps/staff-portal:
     dependencies:
+      '@schoolpilot/shared-utils':
+        specifier: workspace:*
+        version: link:../../packages/shared-utils
       '@supabase/supabase-js':
         specifier: ^2.45.0
         version: 2.45.0

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@schoolpilot/shared-utils": "workspace:*",
     "@supabase/supabase-js": "^2.45.0",
     "@tailwindcss/vite": "^4.3.2",
     "lucide-react": "^0.383.0",

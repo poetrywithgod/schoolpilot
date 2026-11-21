@@ -1,3 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
+
+/*
+ * SchoolPilot design system — shared with super-admin and student-portal.
+ * Forest #0C3B2E · Sage #6D9773 · Tan #BB8A52 · Gold #FFBA00 · Off-white #F5F5F0
+ *
+ * The staff portal's pages were written against Tailwind's default `blue` and
+ * `gray` scales. Re-pointing those scales at the brand palette re-themes every
+ * page at once: blue → forest/sage, gray → warm off-white (light) and deep
+ * forest surfaces (dark).
+ */
+@theme {
+  --font-sans: 'Lora', serif;
+  --font-heading: 'Poppins', sans-serif;
+
+  --color-forest: #0C3B2E;
+  --color-forest-light: #0f4d3d;
+  --color-forest-dark: #081f19;
+  --color-sage: #6D9773;
+  --color-tan: #BB8A52;
+  --color-gold: #FFBA00;
+  --color-offwhite: #F5F5F0;
+
+  /* blue → brand green */
+  --color-blue-50: #eef4ef;
+  --color-blue-100: #dce9de;
+  --color-blue-200: #c0d6c4;
+  --color-blue-300: #9dbfa3;
+  --color-blue-400: #6D9773;
+  --color-blue-500: #2f6b52;
+  --color-blue-600: #0C3B2E;
+  --color-blue-700: #082a21;
+  --color-blue-800: #061f18;
+  --color-blue-900: #0f4d3d;
+
+  /* gray → warm neutrals (light) / forest surfaces (dark) */
+  --color-gray-50: #F5F5F0;
+  --color-gray-100: #ebebe3;
+  --color-gray-200: #dcddd2;
+  --color-gray-300: #c4c9bf;
+  --color-gray-400: #8d9c92;
+  --color-gray-500: #66766b;
+  --color-gray-600: #46564b;
+  --color-gray-700: #1f4a38;
+  --color-gray-800: #163828;
+  --color-gray-900: #0f2d24;
+  --color-gray-950: #081f19;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: 'Lora', serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-offwhite);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, button, label, nav, th {
+  font-family: 'Poppins', sans-serif;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* Primary buttons need to stay visible on the dark forest surfaces */
+.dark .bg-blue-600 { background-color: #2f6b52; }
+.dark .hover\:bg-blue-700:hover { background-color: #3a7d60; }
+.dark .text-blue-600 { color: #6D9773; }
+
+/* Native controls follow the theme (date pickers, number spinners, selects) */
+.dark input[type="date"],
+.dark input[type="time"],
+.dark input[type="datetime-local"],
+.dark input[type="number"],
+.dark select {
+  color-scheme: dark;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(109, 151, 115, 0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #6D9773; }
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.count-up { animation: countUp 0.5s ease forwards; }
